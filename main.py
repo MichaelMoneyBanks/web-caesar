@@ -39,8 +39,22 @@ class Index(webapp2.RequestHandler):
         </form>
         """
 
-        # TODO 1
-        # Include another form so the user can "cross off" a movie from their list.
+    def get(self):
+
+        edit_header = "<h3>Edit My Watchlist</h3>"
+
+    # a form for adding new movies
+        add_form = """
+        <form action="/remove" method="post">
+            <label>
+                I want to remove
+                <input type="text" name="watched-movie"/>
+                from my watchlist.
+            </label>
+            <input type="submit" value="Remove It"/>
+        </form>
+        """
+
 
 
         # TODO 4 (Extra Credit)
@@ -69,16 +83,27 @@ class AddMovie(webapp2.RequestHandler):
         self.response.write(content)
 
 
-# TODO 2
-# Create a new RequestHandler class called CrossOffMovie, to receive and
-# handle the request from your 'cross-off' form. The user should see a message like:
-# "Star Wars has been crossed off your watchlist".
+class RemoveMovie(webapp2.RequestHandler):
+    """ Handles requests coming in to '/remove'
+        e.g. www.flicklist.com/remove
+    """
 
+    def post(self):
+        # look inside the request to figure out what the user typed
+        watched_movie = self.request.get("watched-movie")
+
+        # build response content
+        watched_movie_element = "<strike>" + watched_movie + "</strike>"
+        sentence = watched_movie_element + " has been removed from your Watchlist!"
+
+        content = page_header + "<p>" + sentence + "</p>" + page_footer
+        self.response.write(content)
 
 
 # TODO 3
 # Include a route for your cross-off handler, by adding another tuple to the list below.
 app = webapp2.WSGIApplication([
     ('/', Index),
-    ('/add', AddMovie)
+    ('/add', AddMovie),
+    ('/remove', RemoveMovie)
 ], debug=True)
